@@ -9,22 +9,41 @@ import { ReactComponent as BG3 } from '../../images/icon-brand-recognition.svg'
 
 
 function LinkContent() {
-    const [oldLink, setOldLink] = useState("");
-    const [newLink, setNewLink] = useState("");
-    const shortLinks = [];
+    const [oldLink, setOldLink] = useState('');
+
+    const oldLinks = JSON.parse([localStorage.getItem('oldLinks')]);
+    const shortLinks = JSON.parse([localStorage.getItem('links')]);
+
+    const both = oldLinks.concat(shortLinks);
 
     function getData() {
         axios.get(`https://api.shrtco.de/v2/shorten?url=${oldLink}`)
             .then((res) => {
-                const data = res.data;
-                setNewLink(data.result.short_link2);
-                shortLinks.push(newLink);
+                const data = res.data
+                const new1 = data.result.short_link
+                const old = data.result.original_link
+                oldLinks.push(old);
+                shortLinks.push(new1)
+                setOldLink(oldLink);
+                localStorage.setItem('oldLinks', JSON.stringify(oldLinks));
+                localStorage.setItem('links', JSON.stringify(shortLinks));
                 console.log(data);
             })
         return;
     }
 
+    function copyToClip(text) {
+        navigator.clipboard.writeText(text);
+        return (
+            alert("Link Copied!")
+        )
+    }
 
+
+
+    console.log(oldLinks);
+    console.log(shortLinks);
+    console.log(both);
     return (
         <Container>
             <LSDiv>
@@ -36,30 +55,21 @@ function LinkContent() {
                     Shorten It!
                 </LSButton>
 
-
             </LSDiv>
-
             <LinkList>
-                <ListItem>
-                    <h4>Https://facebook.com.br</h4>
-                    <p>https://aaa.bbb/dasdsa</p>
-                    <CopyButton>Copy</CopyButton>
-                </ListItem>
-                <ListItem>
-                    <h4>Https://facebook.com.br</h4>
-                    <p>https://aaa.bbb/dasdsa</p>
-                    <CopyButton>Copy</CopyButton>
-                </ListItem>
-                <ListItem>
-                    <h4>Https://facebook.com.br</h4>
-                    <p>https://aaa.bbb/dasdsa</p>
-                    <CopyButton>Copy</CopyButton>
-                </ListItem><ListItem>
-                    <h4>Https://facebook.com.br</h4>
-                    <p>https://aaa.bbb/dasdsa</p>
-                    <CopyButton>Copy</CopyButton>
-                </ListItem>
+                {oldLinks.map((links, oldLink) => {
+                    links = oldLinks[oldLink];
+                    oldLink = shortLinks[oldLink]
+                    return (
+                        <ListItem key={links}>
+                            <h4><a href={links}>{links}</a></h4>
+                            <p><a href={oldLink}>{oldLink}</a></p>
+                            <CopyButton onClick={() => copyToClip(oldLink)}>Copy</CopyButton>
+                        </ListItem>
+                    )
+                }
 
+                )}
             </LinkList>
             <AdvancedS>
                 <h1>Advanced Statistcs</h1>

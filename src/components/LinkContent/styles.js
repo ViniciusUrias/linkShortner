@@ -93,14 +93,25 @@ export const ListItem = styled.div`
     >h4{
         padding-left: 20px;
         flex: 1;
+        >a{
+            color: unset;
+            text-decoration: none;
+        }
     }
 
     >p{
         margin-right: 20px;
         color: ${(props) => props.theme.colors.primary};
         font-size: 20px;
-        font-weight: ${(props) => props.theme.fonts.bold}
+        font-weight: ${(props) => props.theme.fonts.bold};
+        
+        >a{
+            color: unset;
+            text-decoration: none;  
+
+        }
     }
+    
 
 
 `;
