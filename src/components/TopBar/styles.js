@@ -5,8 +5,11 @@ export const Container = styled.div`
     width: 100vw;
     height: 70px;
     background-color: "#FFF";
-    border: 1px solid red;
     justify-content: space-between;
+    @media(max-width: 375px){
+        width: 100vw;
+        padding-left: 0;
+    }
 `;
 
 export const LeftContent = styled.div`
@@ -22,6 +25,12 @@ export const LeftContent = styled.div`
         font-size: ${(props) => props.theme.fonts.size};
         padding: 20px;
     }
+    @media(max-width: 375px){
+        padding-left: 0;
+        >h3{
+            display: none;
+        }
+    } 
 `;
 
 export const MiddleContent = styled.div`
@@ -35,6 +44,9 @@ export const RightContent = styled.div`
     display: flex;
     margin-right: 500px;
     align-items: center;
+    @media(max-width: 375px){
+
+    }
 `;
 
 export const LoginButton = styled.button`

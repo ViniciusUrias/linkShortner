@@ -1,6 +1,6 @@
 import { Container, LSDiv, LSInput, LSButton, LinkList, ListItem, CopyButton, AdvancedS, Cards, Card, SvgDiv, Line } from './styles'
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ReactComponent as BG } from '../../images/bg-shorten-desktop.svg'
 import { ReactComponent as BG1 } from '../../images/icon-fully-customizable.svg'
@@ -10,25 +10,47 @@ import { ReactComponent as BG3 } from '../../images/icon-brand-recognition.svg'
 
 function LinkContent() {
     const [oldLink, setOldLink] = useState('');
+    const [visible, setVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const oldLinks = JSON.parse([localStorage.getItem('oldLinks')]);
     const shortLinks = JSON.parse([localStorage.getItem('links')]);
 
-    const both = oldLinks.concat(shortLinks);
+
+    console.log(oldLinks)
+    console.log(shortLinks)
+
+    useEffect(() => {
+        if (oldLinks === null && shortLinks === null) {
+            JSON.parse(localStorage.setItem('oldLinks', ''));
+            JSON.parse(localStorage.setItem('links', ''));
+        } else {
+            JSON.parse(localStorage.getItem('oldLinks'));
+            JSON.parse(localStorage.getItem('links'));
+        }
+
+    })
 
     function getData() {
-        axios.get(`https://api.shrtco.de/v2/shorten?url=${oldLink}`)
-            .then((res) => {
-                const data = res.data
-                const new1 = data.result.short_link
-                const old = data.result.original_link
-                oldLinks.push(old);
-                shortLinks.push(new1)
-                setOldLink(oldLink);
-                localStorage.setItem('oldLinks', JSON.stringify(oldLinks));
-                localStorage.setItem('links', JSON.stringify(shortLinks));
-                console.log(data);
-            })
+        if (oldLink) {
+            setVisible(false);
+            setLoading(true);
+            axios.get(`https://api.shrtco.de/v2/shorten?url=${oldLink}`)
+                .then((res) => {
+                    const data = res.data
+                    const new1 = data.result.short_link
+                    const old = data.result.original_link
+                    console.log(data)
+                    oldLinks.push(old);
+                    shortLinks.push(new1)
+                    setOldLink(oldLink);
+                    localStorage.setItem('oldLinks', JSON.stringify(oldLinks));
+                    localStorage.setItem('links', JSON.stringify(shortLinks));
+
+                }).finally(setLoading(false))
+        } else {
+            setVisible(true);
+        }
         return;
     }
 
@@ -39,11 +61,6 @@ function LinkContent() {
         )
     }
 
-
-
-    console.log(oldLinks);
-    console.log(shortLinks);
-    console.log(both);
     return (
         <Container>
             <LSDiv>
@@ -51,15 +68,18 @@ function LinkContent() {
                 <LSInput onChange={(e) => setOldLink(e.target.value)} value={oldLink} placeholder="Shorten a link here...">
 
                 </LSInput>
+
                 <LSButton type="submit" onClick={() => getData()}>
                     Shorten It!
                 </LSButton>
+                {visible ? <p>Please add a link...</p> : <></>}
+                {loading ? <p>Loading...</p> : <></>}
 
             </LSDiv>
             <LinkList>
                 {oldLinks.map((links, oldLink) => {
                     links = oldLinks[oldLink];
-                    oldLink = shortLinks[oldLink]
+                    oldLink = shortLinks[oldLink];
                     return (
                         <ListItem key={links}>
                             <h4><a href={links}>{links}</a></h4>
@@ -68,7 +88,6 @@ function LinkContent() {
                         </ListItem>
                     )
                 }
-
                 )}
             </LinkList>
             <AdvancedS>

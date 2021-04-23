@@ -19,6 +19,14 @@ export const LSDiv = styled.div`
     background-color: ${(props) => props.theme.colors.primary2};
     border-radius: 10px;
     align-items: center;
+    >p{
+        color:${(props) => props.theme.colors.secondary};
+        display: block;
+        text-align: start;
+        position: absolute;
+        bottom: 20px;
+        left: 10%;
+    }
     >svg{
       
         width: 100%;
@@ -77,7 +85,7 @@ export const LinkList = styled.div`
     display: flex;
     flex-direction: column;
     width: 75%;
-    height: 80px;
+    height: 10%;
     align-content: center;
     justify-content: center;
     margin: 20% 12.5%;
