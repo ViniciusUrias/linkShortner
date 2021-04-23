@@ -21,15 +21,18 @@ function LinkContent() {
     console.log(shortLinks)
 
     useEffect(() => {
-        if (oldLinks === null && shortLinks === null) {
-            JSON.parse(localStorage.setItem('oldLinks', ''));
-            JSON.parse(localStorage.setItem('links', ''));
+        if (localStorage.getItem("links") === null && localStorage.getItem("oldLinks") === null) {
+            localStorage.setItem("links", "[]");
+            localStorage.setItem("oldLinks", "[]")
+
+
         } else {
             JSON.parse(localStorage.getItem('oldLinks'));
             JSON.parse(localStorage.getItem('links'));
+            console.log('vc esta vazio');
         }
 
-    })
+    }, [])
 
     function getData() {
         if (oldLink) {
@@ -44,8 +47,8 @@ function LinkContent() {
                     oldLinks.push(old);
                     shortLinks.push(new1)
                     setOldLink(oldLink);
-                    localStorage.setItem('oldLinks', JSON.stringify(oldLinks));
-                    localStorage.setItem('links', JSON.stringify(shortLinks));
+                    localStorage.setItem("oldLinks", JSON.stringify(oldLinks));
+                    localStorage.setItem("links", JSON.stringify(shortLinks));
 
                 }).finally(setLoading(false))
         } else {
