@@ -13,26 +13,17 @@ function LinkContent() {
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const oldLinks = JSON.parse([localStorage.getItem('oldLinks')]);
-    const shortLinks = JSON.parse([localStorage.getItem('links')]);
 
 
-    console.log(oldLinks)
-    console.log(shortLinks)
+    const [oldLinks, setOldLinks] = useState([]);
+    const [shortLinks, setShortLinks] = useState([]);
+    console.log(oldLinks, shortLinks)
+
+
 
     useEffect(() => {
-        if (localStorage.getItem("links") === null && localStorage.getItem("oldLinks") === null) {
-            localStorage.setItem("links", "[]");
-            localStorage.setItem("oldLinks", "[]")
 
-
-        } else {
-            JSON.parse(localStorage.getItem('oldLinks'));
-            JSON.parse(localStorage.getItem('links'));
-            console.log('vc esta vazio');
-        }
-
-    }, [])
+    })
 
     function getData() {
         if (oldLink) {
@@ -41,16 +32,16 @@ function LinkContent() {
             axios.get(`https://api.shrtco.de/v2/shorten?url=${oldLink}`)
                 .then((res) => {
                     const data = res.data
-                    const new1 = data.result.short_link
-                    const old = data.result.original_link
-                    console.log(data)
-                    oldLinks.push(old);
-                    shortLinks.push(new1)
+                    setShortLinks(() => [...shortLinks, data.result.short_link]);
+                    setOldLinks(() => [...oldLinks, data.result.original_link]);
+                    console.log(oldLinks, shortLinks);
+                    console.log(data);
                     setOldLink(oldLink);
-                    localStorage.setItem("oldLinks", JSON.stringify(oldLinks));
-                    localStorage.setItem("links", JSON.stringify(shortLinks));
+                })
+                .then(() => {
+                    setLoading(false);
 
-                }).finally(setLoading(false))
+                })
         } else {
             setVisible(true);
         }
@@ -80,6 +71,7 @@ function LinkContent() {
 
             </LSDiv>
             <LinkList>
+
                 {oldLinks.map((links, oldLink) => {
                     links = oldLinks[oldLink];
                     oldLink = shortLinks[oldLink];
@@ -92,6 +84,7 @@ function LinkContent() {
                     )
                 }
                 )}
+
             </LinkList>
             <AdvancedS>
                 <h1>Advanced Statistcs</h1>
